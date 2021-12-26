@@ -93,6 +93,8 @@ void ReadTXT(stock stocks[]) {
 }
 
 
+
+
 /***********    Search    ************/
 //股票网址查询
 void get_next(string t, vector<int>& next)
