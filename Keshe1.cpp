@@ -2,6 +2,7 @@
 
 LinkList Array[97];
 
+
 void MainMenu(stock stocks[]);
 void Welcome(stock stocks[]);
 void SearchMenu(stock stocks[]);
