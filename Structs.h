@@ -8,7 +8,7 @@
 #include<chrono>
 #include<thread>
 #define ComN 200				//公司数量
-#define	INF 99999
+#define	INF 999999999
 using namespace std;
 
 /*股票详细数据*/
@@ -27,7 +27,7 @@ typedef struct detail {
 }detail, * det;
 
 typedef struct {
-	int value[60][60];
+	int value[61][61];
 }MGraph;
 
 typedef struct {
@@ -72,9 +72,3 @@ typedef struct BSTNode {
 	stock data;									//存储的数据类型
 	struct BSTNode* lchild, * rchild;			//左右孩子指针
 }BSTNode, * BSTree;
-
-
-typedef struct {
-	int stockpoint1;
-	int stockpoint2;
-}prim;

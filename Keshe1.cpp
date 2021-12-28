@@ -69,7 +69,7 @@ void ReadCSV_2(stock stocks[], MGraph g) {								//读取点和评分
 		
 	}
 }
-void ReadCSV_1_1(MGraph &g,int a,int b) {
+void ReadCSV_1_1(MGraph &g, int a, int b) {
 	ifstream inFile1("60支股票信息1.csv", ios::in);
 	string lineStr1;
 	getline(inFile1, lineStr1);
@@ -82,8 +82,8 @@ void ReadCSV_1_1(MGraph &g,int a,int b) {
 		{
 			j++;
 		}
-		for (int i = 0; i < 60; i++) {
-			for (int k = 0; k < 60; k++) {
+		for (int i =1; i <= 60; i++) {
+			for (int k = 1; k <= 60; k++) {
 				if (i == stoi(str1[0]) && k == stoi(str1[1])) {
 					g.value[stoi(str1[0])][stoi(str1[1])] = stoi(str1[2]);
 					//cout <<i<<"   "<<k <<"   "<<g.value[i][k] << endl;
@@ -92,15 +92,22 @@ void ReadCSV_1_1(MGraph &g,int a,int b) {
 			}
 		}
 	}
-	for (int k = 0; k < 60; k++) {//中间节点
-		for (int i = 0; i < 60; i++) {
-			for (int j = 0; j < 60; j++) {
+	for (int k = 1; k <= 60; k++) {//中间节点
+		for (int i = 1; i <= 60; i++) {
+			for (int j = 1; j <= 60; j++) {
 				if (g.value[i][j] > g.value[i][k] + g.value[k][j]) {
 					g.value[i][j] = g.value[i][k] + g.value[k][j];
 				}
 			}
 		}
 	}
+	/*for (int i = 1; i <= 60; i++) {
+		for (int k = 1; k <= 60; k++) {
+			if (g.value[i][k] != 0 && g.value[i][k] != INF) {
+				cout << i << "  " << k << "   " << g.value[i][k] << endl;
+			}
+		}
+	}*/
 	if (g.value[a][b] != INF) {
 		cout << g.value[a][b];
 	}
@@ -118,8 +125,8 @@ MGraph ReadCSV_1_2(MGraph& g) {
 		{
 			j++;
 		}
-		for (int i = 0; i < 60; i++) {
-			for (int k = 0; k < 60; k++) {
+		for (int i = 1; i <= 60; i++) {
+			for (int k = 1; k <= 60; k++) {
 				if (i == stoi(str1[0]) && k == stoi(str1[1])) {
 					g.value[stoi(str1[0])][stoi(str1[1])] = stoi(str1[2]);
 					//cout <<i<<"   "<<k <<"   "<<g.value[i][k] << endl;
@@ -128,9 +135,9 @@ MGraph ReadCSV_1_2(MGraph& g) {
 			}
 		}
 	}
-	for (int k = 0; k < 60; k++) {											//floyd算法
-		for (int i = 0; i < 60; i++) {
-			for (int j = 0; j < 60; j++) {
+	for (int k = 1; k <= 60; k++) {											//floyd算法
+		for (int i = 1; i <= 60; i++) {
+			for (int j = 1; j <= 60; j++) {
 				if (g.value[i][j] > g.value[i][k] + g.value[k][j]) {
 					g.value[i][j] = g.value[i][k] + g.value[k][j];
 				}
@@ -792,7 +799,10 @@ void A_StockRelevance(stock stocks[], MGraph g) {			//分析_股票相关性分�
 	cout << "***********************************" << endl;
 	cout << "*这是一个基于Floyd的股票相关性分析*" << endl;
 	cout << "***********************************" << endl;
+	//ReadCSV_1_1(g);
+	
 	cout << "请输入你要分析的两支股票的序号(1~60)：";
+	
 	int a, b;
 	cin >> a >> b; 
 	if (a > 60 || b > 60 || a < 1 || b < 1) {
@@ -807,19 +817,124 @@ void A_StockRelevance(stock stocks[], MGraph g) {			//分析_股票相关性分�
 		cout << "即将进入到上一级菜单" << endl; system("pause");
 		AnalyzeMenu(stocks, g);
 	}
-	//string a, b; cin >> a >> b;
-	//Floyd(g);
-	////cout << "分析结果如下：" << endl << endl << endl;
 	cout << "即将进入到上一级菜单" << endl; system("pause");
 	AnalyzeMenu(stocks, g);
 
 }
 //股票基金筛选
+
+//int Min(Closedge closedge[]) {
+//	int min = INF;
+//	int index = -1;
+//	for (int i = 1; i <= 60; i++) {
+//		if (closedge[i].lowcost < min && closedge[i].lowcost != 0) {
+//			min = closedge[i].lowcost;
+//			index = i;
+//		}
+//	}
+//	return index;
+//}
+//void MiniSpanTree_Prim(MGraph g, int u) {
+//	int k = u;
+//	int u0, v0;
+//	for (int j = 1; j <= 60; j++) {
+//		if (j != k) {
+//			closedge[j] = { u,g.value[k][j] };
+//		}
+//	}
+//	closedge[k].lowcost = 0;
+//	for (int i = 1; i <= 60; i++) {
+//		k = Min(closedge);
+//		u0 = closedge[k].adjvex;
+//		v0 = 
+//	}
+//}
+
+void Prim(MGraph& g){
+	/*int sum = 0;
+	int locatest[60];
+	int mst[60];
+	for (int i = 2; i <60; i++) {
+		locatest[i] = g.value[v][i];
+		mst[i] = v;
+	}
+	mst[v] = 0;
+	locatest[v] = 0;
+	for (int i = 2; i < 60; i++) {
+		int minx = INF;
+		int minid = 0;
+		for (int k = 2; k < 60; k++) {
+			if (locatest[k] != 0 && locatest[k] < minx) {
+				minx = locatest[k];
+				minid = k;
+			}
+		}
+		cout << "V" << mst[minid] << "-" << "V" << minid << " = " << minx << endl;
+		locatest[minid] = 0;
+		sum += minx;
+		for (int i = 2; i < 60; i++) {
+			if (g.value[minid][i] < locatest[i]) {
+				locatest[i] = g.value[minid][i];
+				mst[i] = minid;
+			}
+		}
+	}
+	cout << sum << endl;
+	return;*/
+	
+	
+	int min;
+	int dis[61];
+	int flag[61] = { 0 };
+	for (int i = 1; i <= 60; i++)//初始化1号顶点到其它顶点的距离
+	{
+			dis[i] = g.value[1][i];
+	}
+	//for (int i = 1; i <= 60; i++) {
+	//	cout << dis[i] << endl;
+	//}
+	system("pause");
+	flag[1] = 1;
+	int count = 1;
+	int j;
+	int sum = 0;
+	while (count < 60)
+	{
+		min = INF;
+		for (int i = 1; i <= 60; i++)
+		{
+			if (flag[i] == 0 && dis[i] < min)//每次选择1号顶点到其它顶点的最短距离加入生成树
+			{
+				min = dis[i];
+				//cout << min << endl;
+				j = i;
+			}
+		}
+		flag[j] = 1;
+		count++;
+		sum += dis[j];
+		for (int i = 1; i < 60; i++)//选择出的顶点再延伸更新1号顶点到其它顶点的距离
+		{
+			if (flag[i] == 0 && dis[i] > g.value[j][i])
+			{
+				dis[i] = g.value[j][i];//如果满足条件则更新
+				cout << j << " " << i << " " << g.value[j][i] << endl;
+			}
+		}
+	}
+	system("pause");
+	cout << sum << endl;
+}
 void A_StockFund_Prim(stock stocks[], MGraph g) {			//分析_股票基金筛选_基于Prime最小生成树
 	cout << "******************************************" << endl;
 	cout << "*这是一个基于Prim最小生成树的股票基金筛选*" << endl;
 	cout << "******************************************" << endl;
 	MGraph g1 =  ReadCSV_1_2(g);
+	//for (int i = 1; i <= 60; i++)//初始化1号顶点到其它顶点的距离
+	//{
+	//	cout << 1 << "   " << i << "   " << g1.value[1][i] << endl;
+	//}
+	
 	//for (int i = 0; i < 60; i++) {
 	//	for (int k = 0; k < 60; k++) {
 	//		if (g1.value[i][k] != 0 && g1.value[i][k] != INF) {
@@ -828,12 +943,9 @@ void A_StockFund_Prim(stock stocks[], MGraph g) {			//分析_股票基金筛选_
 	//	}
 	//	//测试结果：有效
 	//}
-	prim minprim[3];
-	for (int i = 0; i < 60; i++) {
-		for (int j = 0; j < 60; j++) {
-
-		}
-	}
+	//system("pause");
+	//getPrimPoint(g1);
+	Prim(g1);
 	cout << "分析结果如下：" << endl << endl << endl;
 	cout << "即将进入到上一级菜单" << endl; system("pause");
 	AnalyzeMenu(stocks, g);
@@ -929,11 +1041,11 @@ void MainMenu(stock stocks[], MGraph g) {				//主菜单
 /***********    进入系统界面    ************/
 void Welcome(stock stocks[], MGraph g) {				//欢迎界面
 	
-	cout << "正在读取数据...即将进入系统" << endl;
-	this_thread::sleep_for(chrono::milliseconds(2000));				//延迟函数
-	system("cls");
-	
-	
+	//cout << "正在读取数据...即将进入系统" << endl;
+	//this_thread::sleep_for(chrono::milliseconds(2000));				//延迟函数
+	//system("cls");
+	//
+	//
 	cout << "     *数据读取成功!*" << endl;
 	cout << "欢迎进入股票查询与分析系统" << endl;
 	cout << "             ——by 郭浩宇" << endl;
@@ -946,8 +1058,8 @@ int main()
 {	//system("pause");
 	stock stocks[201];
 	MGraph floyd;
-	for (int i = 0; i < 60; i++) {
-		for (int j = 0; j < 60; j++) {
+	for (int i = 1; i <= 60; i++) {
+		for (int j = 1; j <= 60; j++) {
 			if (i == j) {
 				floyd.value[i][j] = 0;
 			}
@@ -977,7 +1089,7 @@ int main()
 			}
 		}
 	}*/
-	system("pause");
+	//system("pause");
 	Welcome(stocks,floyd);
 
 }
