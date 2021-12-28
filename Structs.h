@@ -8,11 +8,12 @@
 #include<chrono>
 #include<thread>
 #define ComN 200				//公司数量
+#define	INF 99999
 using namespace std;
 
 /*股票详细数据*/
 typedef struct detail {
-	unsigned long long date;				//日期
+	string date;				//日期
 	double oprice;				//开盘价
 	double cprice;				//收盘价
 	double maxprice;			//最高价
@@ -24,6 +25,10 @@ typedef struct detail {
 	string iodrate;				//涨跌幅
 	struct detail* next;
 }detail, * det;
+
+typedef struct {
+	int value[60][60];
+}MGraph;
 
 typedef struct {
 	string StockNum;			//股票代码
@@ -45,8 +50,11 @@ typedef struct {
 	string StockBS;				//经营范围 Business Scope
 	det details;				//详细信息_最近日期
 	string score;				//股票评分
-	string point;					//点
+	int point;					//点
+	//MGraph floyd;				
 }stock;
+
+
 
 typedef struct lnode {
 	detail details;
@@ -54,16 +62,19 @@ typedef struct lnode {
 	string stock_name;
 	struct lnode* next;
 }*linklist,lnode;
+
 typedef struct LNode {
 	stock data;
 	struct LNode* next;
 }*LinkList, LNode;
 
 typedef struct BSTNode {
-	stock data;
+	stock data;									//存储的数据类型
 	struct BSTNode* lchild, * rchild;			//左右孩子指针
 }BSTNode, * BSTree;
 
 
-
-
+typedef struct {
+	int stockpoint1;
+	int stockpoint2;
+}prim;
