@@ -72,3 +72,10 @@ typedef struct BSTNode {
 	stock data;									//存储的数据类型
 	struct BSTNode* lchild, * rchild;			//左右孩子指针
 }BSTNode, * BSTree;
+
+struct QueueSq {
+	int* queue1;
+	int  front1;
+	int  rear;
+	int MaxSize;
+};
