@@ -194,8 +194,8 @@ MGraph ReadCSV_1_2(MGraph& g) {
 	for (int k = 1; k <= 60; k++) {											//floyd算法
 		for (int i = 1; i <= 60; i++) {
 			for (int j = 1; j <= 60; j++) {
-				if (g.value[i][j] > g.value[i][k] + g.value[k][j]) {
-					g.value[i][j] = g.value[i][k] + g.value[k][j];
+				if (g.value[i][k] + g.value[k][j] < g.value[i][j]) {
+					g.value[i][j] = g.value[i][k] + g.value[k][j];			//松弛操作
 				}
 			}
 		}
@@ -203,6 +203,34 @@ MGraph ReadCSV_1_2(MGraph& g) {
 	return g;
 }
 
+MGraph ReadCSV_1_3(MGraph g) {
+	ifstream inFile1("60支股票信息1.csv", ios::in);
+	string lineStr1;
+	getline(inFile1, lineStr1);
+	cout << "路径:" << endl;
+
+	while (getline(inFile1, lineStr1))
+	{
+		stringstream ss(lineStr1);
+		string str1[200];
+		int j = 0;
+		while (getline(ss, str1[j], ','))
+		{
+			j++;
+		}
+		for (int i = 1; i <= 60; i++) {
+			for (int k = 1; k <= 60; k++) {
+				if (i == stoi(str1[0]) && k == stoi(str1[1])) {
+					g.value[stoi(str1[0])][stoi(str1[1])] = stoi(str1[2]);
+					g.value[stoi(str1[1])][stoi(str1[0])] = stoi(str1[2]);
+
+				}
+
+			}
+		}
+	}
+	return g;
+}
 
 void ReadTXT(stock stocks[], MGraph g) {
 	string k = "股票涨跌数据/";
@@ -312,7 +340,9 @@ void BSTInsert(BSTNode*& p, stock elem) {					//在给定的BSTree中插入elem�
 		//cout << endl << 1 << endl;
 		return BSTInsert(p->rchild, elem);
 	}
-}
+}	
+BSTree Tree = NULL;	//创建并初始化二叉树，头节点置为空
+	
 void CreatBST(BSTNode *& T,stock stocks[]) {
 	for (int i = 0; i < ComN; i++) {
 		BSTInsert(T, stocks[i]);
@@ -335,8 +365,7 @@ BSTNode *BSTsearch(BSTree T,string Tobes){
 	}
 }
 void S_SI_BT(stock stocks[], MGraph g) {					//查询_股票网址查询_基于二叉树BT
-	BSTree Tree = NULL;							//创建并初始化二叉树，头节点置为空
-	CreatBST(Tree,stocks);
+						
 	cout << "**********************************" << endl;
 	cout << "*这是一个基于二叉树的股票信息查询*" << endl;
 	cout << "**********************************" << endl;
@@ -791,7 +820,7 @@ void A_StockPrice_DIS(stock stocks[], MGraph g) {			//分析_股票价格分析_
 
 }
 
-void SelectSort(stock* temp, int num) {
+void SelectSort_score(stock* temp, int num) {
 	for (int i = 0; i < num; i++)  /*做n-1趟选取*/
 	{
 		int k = i;    /*在i开始的n-i+1个记录中选关键码最小的记录*/
@@ -807,24 +836,66 @@ void SelectSort(stock* temp, int num) {
 		}
 	}
 }
+
+//void SelectSort_iodrate(stock* temp, int num) {
+//	for (int i = 0; i < num; i++)  /*做n-1趟选取*/
+//	{
+//		int k = i;    /*在i开始的n-i+1个记录中选关键码最小的记录*/
+//		for (int j = i + 1; j <= num; j++) {
+//			if (temp[j].details->next->iodrate > temp[k].details->next->iodrate) {
+//				k = j; 
+//			}
+//		}	   
+//		/*k中存放关键码最小记录的下标*/
+//		if (i != k)    /*关键码最小的记录与第i个记录交换*/
+//		{
+//			stock temp_;
+//			temp_ = temp[k];
+//			temp[k] = temp[i];
+//			temp[i] = temp_;
+//		}
+//	}
+//}
+//void fileWrite_ss()
+
+void fileWrite_ss(stock temp[],int Num) {
+	ofstream outFile;
+	outFile.open("评分排序.csv", ios::out);
+	outFile << "按照评分排序" << endl;
+	outFile << "序号" << ',' << "点坐标" << ',' << "股票名称" << ',' << "股票评分" << endl;
+	for (int i = 0; i < Num; i++) {
+		outFile << i + 1 << ',' << temp[i].point << ',' << temp[i].StockName << ',' << temp[i].score << endl;
+	}
+	outFile << endl;
+	outFile.close();
+}
 void A_StockPrice_SS(stock stocks[], MGraph g) {			//分析_股票价格分析_基于简单选择排序SelectionS
 	cout << "****************************************" << endl;
 	cout << "*这是一个基于简单选择排序的股票价格分析*" << endl;
 	cout << "****************************************" << endl;
 	cout << "根据调研结果，分析结果如下：" << endl << endl << endl;
-	stock temps[61];
+	stock temps1[61];
+	stock temps2[61];
 	int Num = 0;
 	for (int i = 0; i < ComN; i++) {
 		if (stocks[i].score != "-1") {
-			temps[Num] = stocks[i];
-			temps[Num].details = stocks[i].details->next;
+			temps1[Num] = stocks[i];
+			temps2[Num] = stocks[i];
+			temps1[Num].details = stocks[i].details->next;
+			temps2[Num].details = stocks[i].details->next;
 			Num++;
 		}
 	}
-	SelectSort(temps, Num);
+	SelectSort_score(temps1, Num);
 	for (int i = 0; i < Num; i++) {
-		cout << setfill(' ') << setw(2)<< i+1 << setfill(' ') << setw(10) <<temps[i].point<< setfill(' ') << setw(15) << temps[i].StockName << setfill(' ') << setw(10) << temps[i].score << endl;
+		cout << setfill(' ') << setw(2)<< i+1 << setfill(' ') << setw(10) <<temps1[i].point<< setfill(' ') << setw(15) << temps1[i].StockName << setfill(' ') << setw(10) << temps1[i].score << endl;
 	}
+	fileWrite_ss(temps1, Num);
+	cout << "股票评分排序已写入指定文件中" << endl;
+	/*SelectSort_iodrate(temps2, Num);
+	for (int i = 0; i < Num; i++) {
+		cout << setfill(' ') << setw(2) << i + 1 << setfill(' ') << setw(10) << temps2[i].point << setfill(' ') << setw(15) << temps2[i].StockName << setfill(' ') << setw(10) << temps2[i].details->iodrate << endl;
+	}*/
 	cout << "即将进入到上一级菜单" << endl; system("pause");
 	AnalyzeMenu(stocks, g);
 
@@ -981,24 +1052,23 @@ void Prim(MGraph& g,stock stocks[]){
 			count++;
 			sum += dis[j];
 			int temp = -1;
-			for (int i = 1; i < 60; i++)//选择出的顶点再延伸更新1号顶点到其它顶点的距离
+			for (int i = 0; i <= 60; i++)//选择出的顶点再延伸更新1号顶点到其它顶点的距离
 			{
-				
 				if (flag[i] == 0 && dis[i] > g.value[j][i])
 				{
 					dis[i] = g.value[j][i];//如果满足条件则更新
 					temp = i;
-					//cout << j << " " << i << " " << g.value[j][i] << endl;
+					cout << j << " " << i << " " << g.value[j][i] << endl;
 				}
-				
 			}
-		}
+			
+		}cout << "__________" << endl;
 	}
 	cout << endl;
 	cout << "根据分析结果以及程序制作者主观断定，根据相关性最小，基金建议如下：" << endl;
-	cout << "边权值48，点12：" << stocks[12].StockName << "     点20：" << stocks[20].StockName << endl;
-	cout << "边权值59，点26：" << stocks[26].StockName << "     点2：" << stocks[2].StockName << endl;
-	cout << "边权值59，点23：" << stocks[23].StockName  << "     点4：" << stocks[4].StockName << endl; 
+	cout << "边权值2，点2：" << stocks[2].StockName << "     点3：" << stocks[3].StockName << endl;
+	cout << "边权值2，点15：" << stocks[15].StockName << "     点10：" << stocks[10].StockName << endl;
+	cout << "边权值2，点29：" << stocks[29].StockName  << "     点21：" << stocks[21].StockName << endl; 
 	//2 20 30 33 21
 	/*cout << "分析结果为：" << endl;
 		/*stock temp[2];
@@ -1059,18 +1129,18 @@ int color[61];
 int edge[61][61];
 bool DFS(int v, int c) {
 	color[v] = c;    //将当前顶点涂色
-	for (int i = 0; i < 10; i++) {    //遍历所有相邻顶点，即连着的点
+	for (int i = 0; i < 60; i++) {    //遍历所有相邻顶点，即连着的点
 		if (edge[v][i] == 1) {    //如果顶点存在
 			if (color[i] == c)    //如果颜色重复，就返回false
 				return false;
 			if (color[i] == 0 && !DFS(i, -c))    //如果还未涂色，就染上相反的颜色-c,并dfs这个顶点，进入下一层
-				return false;   //返回false
+				return false;   
 		}
 	}
 	return true;   //如果所有顶点涂完色，并且没有出现同色的相邻顶点，就返回true
 }
-void solve(int n) {
-	for (int i = 0; i < n; i++) {
+void solve() {
+	for (int i = 0; i < 10; i++) {
 		if (color[i] == 0) {
 			if (!DFS(i, 1)) {
 				cout << "不是二部图" << endl;
@@ -1087,6 +1157,13 @@ void A_StockFund_Bigraph(stock stocks[], MGraph g) {		//分析_股票基金筛�
 	cout << "**********************************" << endl;
 	int t[11]; int flag = 0;
 	
+	MGraph g1 =  ReadCSV_1_3(g);
+	/*for (int i = 1; i <= 60; i++) {
+		for (int j = 1; j <= 60; j++) {
+			cout <<setw(10)<<setfill(' ')<< g1.value[i][j] << "  ";
+		}
+		cout << endl;
+	}*/
 	cout << "请输入10个点(0~60)：" << endl;
 	for (int i = 0; i < 61; i++) {
 		color[i] = 0;
@@ -1101,14 +1178,27 @@ void A_StockFund_Bigraph(stock stocks[], MGraph g) {		//分析_股票基金筛�
 	int m = 0;
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 10; j++) {
-			if (i != j && g.value[t[i]][t[j]] != INF) {
+			if (i != j  && g1.value[t[i]][t[j]] != INF) {
 				m++;
 				edge[t[i]][t[j]] = 1;
 				edge[t[j]][t[i]] = 1;
 			}
 		}
 	}
-	solve(10);
+	/*for (int i = 0; i <= 60; i++) {
+		for (int j = 0; j <= 60; j++) {
+			cout << setw(3) << setfill(' ') << edge[i][j] << "  ";
+		}
+		cout << endl;
+	}*/
+	/*for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (edge[t[i]][t[j]] == 1) {
+				cout <<t[i]<<"  "<<t[j]<<"  "<< edge[t[i]][t[j]] << endl;
+			}
+		}
+	}*/
+	solve();
 	cout << "结点信息如下：" << endl;
 	for (int i = 0; i < 10; i++) {
 		cout << i + 1 << setw(15) << stocks[t[i]].StockName << setfill(' ') << endl;
@@ -1299,8 +1389,7 @@ void BSTDelete(BSTree& T,string a) {
 	}
 }
 void DeleteBST(stock stocks[],MGraph g) {
-	BSTree Tree = NULL;
-	CreatBST(Tree, stocks);
+	
 	cout << "*******************************" << endl;
 	cout << "*****选做:二叉排序树的删除*****" << endl;
 	cout << "*******************************" << endl;
@@ -1365,6 +1454,7 @@ void Welcome(stock stocks[], MGraph g) {				//欢迎界面
 int main()
 {	//system("pause");
 	stock stocks[201];
+	
 	MGraph floyd;
 	for (int i = 1; i <= 60; i++) {
 		for (int j = 1; j <= 60; j++) {
@@ -1400,6 +1490,7 @@ int main()
 		}
 	}*/
 	//system("pause");
+	CreatBST(Tree, stocks);
 	Welcome(stocks,floyd);
 
 }
